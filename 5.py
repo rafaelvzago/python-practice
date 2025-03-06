@@ -59,7 +59,8 @@ def get_user_from_database(username, db_connection):
         raise RuntimeError(f"Database error while retrieving user: {str(e)}")
 
 
-# Pytest fixture for mocking database connection
+# Pytest fixture for mocking database connection, a fixture is a function that is run by pytest before the actual test functions to provide a fixed baseline upon which tests can reliably and repeatedly
+# depend. Fixtures are used to manage the setup and teardown of resources required by the tests.
 @pytest.fixture
 def mock_db_connection():
     """

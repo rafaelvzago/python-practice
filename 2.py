@@ -1,7 +1,7 @@
 import unittest
 
 # First, let's write our tests (Test-Driven Development)
-class TestCalculator(unittest.TestCase):
+class TestCalculator(unittest.TestCase): # Inherit from unittest.TestCase
     
     def test_addition(self):
         """Test that addition works correctly."""

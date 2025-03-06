@@ -16,14 +16,14 @@ def debounce(wait_time):
         function: Decorator function
     """
     def decorator(func):
-        # Store state between function calls
+        # Store state between function calls, because we need to access it in the delayed call
         timer = None
         last_args = None
         last_kwargs = None
         last_result = None
         lock = threading.Lock()
         
-        @functools.wraps(func)
+        @functools.wraps(func) # Here we use functools.wraps to preserve the original function's metadata
         def wrapper(*args, **kwargs):
             nonlocal timer, last_args, last_kwargs, last_result
             
@@ -59,7 +59,7 @@ def debounce(wait_time):
 if __name__ == "__main__":
     print("Testing debounce functionality...")
     
-    # Use a list to track call count (to avoid the nonlocal binding issue)
+    # Use a list to track call count (to avoid the nonlocal binding issue, that is when we want to modify a variable in a nested function)
     call_stats = [0]
     
     @debounce(1.0)  # 1 second debounce time
