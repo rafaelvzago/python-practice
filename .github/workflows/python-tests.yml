@@ -13,13 +13,13 @@ jobs:
     
     strategy:
       matrix:
-        python-version: [3.11] 
+        python-version: [3.11]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
@@ -30,6 +30,7 @@ jobs:
         pip install pytest unittest-xml-reporting
     
     - name: Run standard Python tests (1-4)
+      id: run_standard_tests
       run: |
         python 1.py
         python 2.py
@@ -38,6 +39,7 @@ jobs:
       continue-on-error: false
     
     - name: Run pytest test (5.py)
+      id: run_pytest
       run: |
         pytest 5.py -v
     
@@ -57,7 +59,7 @@ jobs:
     
     - name: Upload test report
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4  # Updated to v4
       with:
         name: test-report
         path: test_report.md
