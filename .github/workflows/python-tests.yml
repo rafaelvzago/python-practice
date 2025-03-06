@@ -1,0 +1,63 @@
+name: Python Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: [3.11] 
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest unittest-xml-reporting
+    
+    - name: Run standard Python tests (1-4)
+      run: |
+        python 1.py
+        python 2.py
+        python 3.py
+        python 4.py
+      continue-on-error: false
+    
+    - name: Run pytest test (5.py)
+      run: |
+        pytest 5.py -v
+    
+    - name: Generate test report
+      if: always()  # This ensures the step runs even if previous steps fail
+      run: |
+        echo "# Test Summary Report" > test_report.md
+        echo "" >> test_report.md
+        echo "## Standard Tests (1-4)" >> test_report.md
+        echo "- File 1.py: ${{ steps.run_standard_tests.outcome == 'success' && '✅ Passed' || '❌ Failed' }}" >> test_report.md
+        echo "- File 2.py: ${{ steps.run_standard_tests.outcome == 'success' && '✅ Passed' || '❌ Failed' }}" >> test_report.md
+        echo "- File 3.py: ${{ steps.run_standard_tests.outcome == 'success' && '✅ Passed' || '❌ Failed' }}" >> test_report.md
+        echo "- File 4.py: ${{ steps.run_standard_tests.outcome == 'success' && '✅ Passed' || '❌ Failed' }}" >> test_report.md
+        echo "" >> test_report.md
+        echo "## Pytest Tests (5.py)" >> test_report.md
+        echo "- File 5.py: ${{ steps.run_pytest.outcome == 'success' && '✅ Passed' || '❌ Failed' }}" >> test_report.md
+    
+    - name: Upload test report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-report
+        path: test_report.md
